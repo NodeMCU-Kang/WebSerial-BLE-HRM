@@ -50,6 +50,7 @@
       });
       
       function serial_read(){
+        heart_rate.innerHTML="未連接";
         reader.read().then( (result) => {
           console.log(result);
           heart_rate.innerHTML=result.value;
