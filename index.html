@@ -1,3 +1,4 @@
+<!--https://github.com/NodeMCU-Kang/WebSerial-BLE-HRM/settings/pages-->
 <!doctype html>
 <html lang="en">
 
@@ -11,7 +12,11 @@
 
     <button><h1>連接心率錶</h1></button>
     <h1>心跳：<span>00</span></h1>
-    <script>
+<!--    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.0/chart.min.js"></script>-->
+<!--   根據 https://stackoverflow.com/questions/74853338/migration-chart-js-with-zoom-plugin-and-moment-adapter 改用以下-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.1.1/chart.umd.js"></script>
+    
+     <script>
       var port;
       const button = document.querySelector('button');
       const heart_rate = document.querySelector('span');
@@ -50,7 +55,6 @@
       });
       
       function serial_read(){
-        // 會造成閃爍 heart_rate.innerHTML="未連接";
         reader.read().then( (result) => {
           console.log(result);
           heart_rate.innerHTML=result.value;
