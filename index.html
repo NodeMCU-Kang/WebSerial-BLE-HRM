@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Web Serial</title>
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+
+  <body>
+
+    <button><h1>連接心率錶</h1></button>
+    <h1>心跳：<span>00</span></h1>
+    <script>
+      var port;
+      const button = document.querySelector('button');
+      const heart_rate = document.querySelector('span');
+      
+      heart_rate.innerHTML="72\n";
+      button.addEventListener('click', async function() {
+
+        // Prompt user to select any serial port.
+        port = await navigator.serial.requestPort();
+        
+        console.log("port is requested");
+
+        //Wait for the serial port to open.
+        await port.open({ baudRate: 115200 });
+        
+        console.log("port is opened");
+        
+        decoder = new TextDecoderStream();
+        port.readable.pipeTo(decoder.writable)
+        .then(() => console.log("bbb"));
+        console.log("aaa");
+        
+        reader = await decoder.readable.getReader();
+
+        console.log("read port");
+        
+//        const { value, done } = await reader.read();  
+//        console.log(done, value);
+        
+        
+//        reader.read().then( (result) => {console.log(result)});
+        
+        setInterval(serial_read, 100);
+        
+        
+      });
+      
+      function serial_read(){
+        reader.read().then( (result) => {
+          console.log(result);
+          heart_rate.innerHTML=result.value;
+        });
+      }
+    </script>
+    
+    
+  <script>
+//    var serialport;
+//    
+//    (async() => {
+//      await navigator.serial.requestPort()
+//      .then(port => {
+//        serialport = port;
+//
+//        await serialport.open({baudRate:115200});
+//        decoder = new TextDecoderStream();
+//        await serialport.readable.pipeTo(decoder.writable);
+//        reader = decoder.readable.getReader();
+//
+//        const { value, done } = await reader.read();
+//
+//      })      
+//    })();
+    
+//      async function myfunction() {
+//        console.log('Inside of myfunction');
+//        await navigator.serial.requestPort()
+//        .then(port => {})
+//      }
+//
+//      // Here we wait for the myfunction to finish
+//      // and then returns a promise that'll be waited for aswell
+//      // It's useless to wait the myfunction to finish before to return
+//      // we can simply returns a promise that will be resolved later
+//
+//      // Also point that we don't use async keyword on the function because
+//      // we can simply returns the promise returned by myfunction
+//      function start() {
+//        return myfunction();
+//      }
+//
+//      // Call start
+//      (async() => {
+//        console.log('before start');
+//
+//        await start();
+//
+//        console.log('after start');
+//      })();
+  </script>
+    
+
+  </body>
+
+</html>
