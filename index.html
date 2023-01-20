@@ -12,11 +12,36 @@
 
     <button><h1>連接心率錶</h1></button>
     <h1>心跳：<span>00</span></h1>
+    <div style="width: 800px;"><canvas id="heart_rate"></canvas></div>
 <!--    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.0/chart.min.js"></script>-->
 <!--   根據 https://stackoverflow.com/questions/74853338/migration-chart-js-with-zoom-plugin-and-moment-adapter 改用以下-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.1.1/chart.umd.js"></script>
     
      <script>
+      var data=[];
+      for (i=0;i<100;i++) {data.push({"i":i, "hr":72});}
+      hr_chart = new Chart( 
+        document.getElementById('heart_rate'), 
+        {
+          type:'line',
+          data:{labels: data.map(row => row.i), 
+                datasets:[
+                  {
+                    label: "hr", 
+                    data: data.map(row => row.hr)
+                  }
+                ]
+               },
+          options: {
+              scales: {
+                y: {
+                  min:50,
+                }
+              },
+          }
+        }
+      ); 
+       
       var port;
       const button = document.querySelector('button');
       const heart_rate = document.querySelector('span');
@@ -49,17 +74,42 @@
         
 //        reader.read().then( (result) => {console.log(result)});
         
-        setInterval(serial_read, 100);
+        setInterval(serial_read,500);
         
         
       });
       
+       var label_index=100;
       function serial_read(){
         reader.read().then( (result) => {
-          console.log(result);
-          heart_rate.innerHTML=result.value;
+          //console.log(result.value);
+          var hr_arr = result.value.split("\n")
+          //console.log(hr_arr);
+          //heart_rate.innerHTML=result.value.substr(0,3);
+          heart_rate.innerHTML=hr_arr[0];
+          
+          hr_chart.data.labels.push(label_index++);
+          console.log(parseInt(hr_arr[0]));
+          //hr_chart.data.datasets[0].data.push(parseInt(hr_arr[0]));
+          hr_chart.data.datasets[0].data.push(parseInt(hr_arr[0]));
+          hr_chart.data.labels.shift()
+          hr_chart.data.datasets[0].data.shift()
+          hr_chart.update("none"); // must be "none" to show correctly without animation
+          
         });
       }
+       
+      function test_update(){
+        hr_chart.update('none');
+      }
+      function test_serial_read(){ 
+          hr_chart.data.labels.push(label_index++);
+          hr_chart.data.datasets[0].data.push(parseInt("50"));
+          hr_chart.data.labels.shift();
+          hr_chart.data.datasets[0].data.shift();
+          setTimeout(test_update, 10);
+      }
+       
     </script>
     
     
